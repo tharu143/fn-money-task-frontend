@@ -28,7 +28,7 @@ const AssessmentForm = () => {
     formDataToSend.append('file', formData.file);
 
     try {
-      const res = await fetch('http://localhost:5000/api/assessments', {
+      const res = await fetch('http://localhost:5000/api/assessment', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: formDataToSend,

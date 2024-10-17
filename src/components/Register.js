@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import registerIcon from '../img/signin.png'; 
 
 const Register = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [error, setError] = useState('');
   const navigate = useNavigate(); // Initialize useNavigate
 
   const handleChange = (e) => {
@@ -13,19 +14,29 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Replace the alert with actual API call
-    // Example: await registerUser(formData);
-    console.log(formData);
-    
-    // Redirect to login page on success
-    alert('Registration Successful!');
-    navigate('/login'); // Redirect to login page
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      
+      const data = await res.json();
+      if (res.status === 201) {
+        alert('Registration Successful!');
+        navigate('/login'); // Redirect to login page
+      } else {
+        setError(data.message || 'Registration failed');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('An error occurred');
+    }
   };
 
   return (
     <div className="max-w-md mx-auto mt-10 bg-white shadow-lg rounded-lg p-6">
       <h2 className="text-3xl font-bold text-center mb-4 text-green-600">Register</h2>
-      
       <div className="flex justify-center mb-4">
         <img 
           src={registerIcon} 
@@ -33,7 +44,9 @@ const Register = () => {
           className="rounded-md shadow-md w-20 h-20" 
         />
       </div>
-      
+
+      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-gray-700">Name:</label>
