@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import loginIcon from '../img/login.png'; 
 
 const Login = () => {
@@ -6,6 +7,7 @@ const Login = () => {
     email: '',
     password: '',
   });
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleChange = (e) => {
     setFormData({
@@ -14,17 +16,22 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Replace the alert with actual API call
+    // Example: await loginUser(formData);
     console.log(formData);
+
+    // Redirect to assessment tasks on success
     alert('Login Successful!');
+    navigate('/assessment'); // Redirect to assessment tasks page
   };
 
   return (
     <div className="max-w-md mx-auto mt-10 bg-white shadow-lg rounded-lg p-6">
       <h2 className="text-3xl font-bold text-center mb-4 text-green-600">Login</h2>
       
- 
       <div className="flex justify-center mb-4">
         <img 
           src={loginIcon} 

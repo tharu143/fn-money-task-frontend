@@ -3,6 +3,7 @@ import assessmentIcon from '../img/dashboard_icon.png';
 
 const AssessmentForm = () => {
   const [formData, setFormData] = useState({ task: '', description: '', file: null });
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     if (e.target.name === 'file') {
@@ -12,17 +13,43 @@ const AssessmentForm = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    alert('Assessment Submitted!');
+    
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('You need to be logged in to submit an assessment');
+      return;
+    }
+
+    const formDataToSend = new FormData();
+    formDataToSend.append('task', formData.task);
+    formDataToSend.append('description', formData.description);
+    formDataToSend.append('file', formData.file);
+
+    try {
+      const res = await fetch('http://localhost:5000/api/assessments', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formDataToSend,
+      });
+      
+      const data = await res.json();
+      if (res.status === 201) {
+        alert('Assessment Submitted!');
+      } else {
+        setError(data.message || 'Submission failed');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('An error occurred');
+    }
   };
 
   return (
     <div className="max-w-lg mx-auto mt-10 bg-white shadow-lg rounded-lg p-6">
       <h2 className="text-3xl font-bold text-center mb-4 text-green-600">Submit Assessment</h2>
-      
-      
+
       <div className="flex justify-center mb-4">
         <img 
           src={assessmentIcon}
@@ -30,7 +57,9 @@ const AssessmentForm = () => {
           className="rounded-md shadow-md w-20 h-20" 
         />
       </div>
-      
+
+      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-gray-700">Task Title:</label>

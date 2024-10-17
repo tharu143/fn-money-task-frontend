@@ -1,17 +1,25 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import registerIcon from '../img/signin.png'; 
 
 const Register = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Replace the alert with actual API call
+    // Example: await registerUser(formData);
     console.log(formData);
+    
+    // Redirect to login page on success
     alert('Registration Successful!');
+    navigate('/login'); // Redirect to login page
   };
 
   return (
